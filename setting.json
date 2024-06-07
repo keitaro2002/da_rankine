@@ -1,0 +1,30 @@
+    "[python]": {
+        // タブサイズは 4
+        "editor.tabSize": 4,
+        // ファイル保存時にフォーマット
+        "editor.formatOnSave": true
+    },
+    // tests ディレクトリから src ディレクトリのモジュールをインポートするときの vscode 上でモジュールが見つからないエラー防止
+    "python.analysis.extraPaths": [
+        "./src"
+    ],
+    // .venv 内の python を使用
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+    // フォーマッターは black を使用
+    "python.formatting.provider": "black",
+    "python.formatting.blackPath": "${workspaceFolder}/.venv/bin/black",
+    "python.sortImports.path": "${workspaceFolder}/.venv/bin/isort",
+    // リンターに flake8 と mypy を使用
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Args": [
+        "--ignore=E203, W503",
+	// E203: ":"の前の空白を入れないルール
+	// W503: 演算子の前に改行しないようにするルール
+	"--max-complexity=10",
+    ],
+    "python.linting.flake8Path": "${workspaceFolder}/.venv/bin/flake8",
+    "python.linting.mypyEnabled": true,
+    "python.linting.mypyPath": "${workspaceFolder}/.venv/bin/mypy",
+    // docstring は nympy スタイル (ここは完全好みです)
+    "autoDocstring.docstringFormat": "numpy":,
