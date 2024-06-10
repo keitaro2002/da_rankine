@@ -6,7 +6,7 @@ from config import config
 class RankineData():
     """
     Example:
-    --------
+    ------
     >>> from src.data.dataset import RankineData
     >>> number_of_prior = 1
     >>> data = RankineData(number_of_prior)
