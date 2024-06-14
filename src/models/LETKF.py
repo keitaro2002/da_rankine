@@ -15,11 +15,8 @@ from src.data.dataset import RankineData
 
 class LETKF:
     def __init__(self):
-<<<<<<< HEAD
         self.name = "LETKF"
-=======
-        self.name = 'LETKF'
->>>>>>> make_dataset#3
+
         self.ensemble_size = config.ensemble_size
         self.number_of_obs = config.number_of_obs
         self.data = RankineData(config.number_of_prior)
