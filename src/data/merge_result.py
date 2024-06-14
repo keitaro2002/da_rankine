@@ -1,5 +1,8 @@
 import os
 
+from src.config import config
+import numpy as np
+
 def rename_files_in_directory(directory):
     # ディレクトリ内の全てのファイルをリストアップ
     files = os.listdir(directory)
@@ -24,18 +27,18 @@ def rename_files_in_directory(directory):
 # rename_files_in_directory(directory_path)
 
 
-import os
-import numpy as np
-
 def combine_files(directory, start, end, interval):
     all_u_x = []
     all_u_y = []
+    noise_flag = config.noise_flag
 
     for i in range(start, end, interval):
         p_range_start = i
         p_range_end = min(i + interval - 1, end - 1)
 
-        filename = f'windvalues_analysis_{p_range_start}_{p_range_end}.npz'
+        noise_part = '' if noise_flag else '_no_noise'
+        filename = f'windvalues_analysis{noise_part}_{p_range_start}_{p_range_end}.npz'
+
         filepath = os.path.join(directory, filename)
         
         if not os.path.exists(filepath):
@@ -50,8 +53,9 @@ def combine_files(directory, start, end, interval):
     combined_u_y = np.concatenate(all_u_y, axis=1)
 
     combined_data = {'u_x': combined_u_x, 'u_y': combined_u_y}
-    np.savez(os.path.join(directory, 'combined_windvalues_analysis.npz'), **combined_data)
-    print('Files combined successfully into combined_windvalues_analysis.npz')
+    
+    np.savez(os.path.join(directory, f'combined_windvalues_analysis{noise_part}.npz'), **combined_data)
+    print(f'Files combined successfully into combined_windvalues_analysis{noise_part}.npz')
 
 # 使用例
 directory_path = "/data10/kinuki/da_rankine/results/analysis"

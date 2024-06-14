@@ -41,10 +41,45 @@ def show_prior(number_of_prior):
         pivot="mid",
     )
     cont = plt.contour(xx, yy, u, levels=[14], colors="black")
-    plt.savefig(f"data10/kinuki/da_rankine/results/img/prior{number_of_prior}.png")
+    plt.savefig(f"/data10/kinuki/da_rankine/results/img/prior{number_of_prior}.png")
+
+def show_obs(noise_flag = config.noise_flag):
+    data = RankineData(1)
+    true_u_x, true_u_y, true_u = (
+        data.windvalues_true["u_x"],
+        data.windvalues_true["u_y"],
+        data.windvalues_true["u"],
+    )
+    obs_u_x, obs_u_y, obs_u = (
+        data.obs["u_x"],
+        data.obs["u_y"],
+        data.obs["u"],
+    )
+    obs_points = data.obs_points
+    # 91x91の格子点を作成(for 等高線を描く)
+    xx, yy = data.xx, data.yy
+
+    fig, ax = plt.subplots(figsize=(6, 6))
+    ax.set_aspect('equal', 'box')
+    ax.set_xticks(np.arange(0, 91, 10))
+    ax.set_yticks(np.arange(0, 91, 10))
+
+    ax.scatter(24, 24, c='black', marker='x', s=50)  # Center point marker
+    im = ax.scatter(obs_points[:,0], obs_points[:,1], c=obs_u, cmap='coolwarm')
+    fig.colorbar(im, ax=ax, shrink=0.80, aspect=20, label='Wind Speed (obs)')
+    cont = ax.contour(xx, yy, true_u, levels=[14], colors='black')
+    ax.quiver(obs_points[:,0],obs_points[:,1],obs_u_x, obs_u_y,scale = 3,angles='xy',scale_units='xy')
+
+    ax.set_xlim(0, 90)
+    ax.set_ylim(0, 90)
+    plt.tight_layout()
+    
+    noise_part = '' if noise_flag else '_no_noise'
+    plt.savefig(f"/data10/kinuki/da_rankine/results/img/obs{noise_part}.png")
 
 
 def show_analysis():
+    noise_part = '' if config.noise_flag else '_no_noise'
     data = np.load(
         "/data10/kinuki/da_rankine/results/analysis/combined_windvalues_analysis.npz",
         allow_pickle=True,
@@ -65,9 +100,10 @@ def show_analysis():
     cmaps = ["Red", "Blue", "Green", "Orange", "Purple"]
     for i in range(config.ensemble_size):
         ax.contour(xx, yy, u[i], levels=[14], colors=cmaps[i % 5])
-    plt.savefig(f"/data10/kinuki/da_rankine/results/img/analysis.png")
+    plt.savefig(f"/data10/kinuki/da_rankine/results/img/analysis{noise_part}.png")
 
 
 if __name__ == "__main__":
     # show_prior(number_of_prior = 1)
-    show_analysis()
+    # show_analysis()
+    show_obs()

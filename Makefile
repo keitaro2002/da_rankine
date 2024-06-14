@@ -1,5 +1,3 @@
-# Makefile
-
 # 変数の定義
 SIF_PATH := /data10/imageshare/kinuki/cuda116_py39_jupyter.sif
 VENV_PATH := /data10/kinuki/da_rankine/.venv
@@ -45,9 +43,9 @@ run_parallel:
 .PHONY: run
 run:
 	@if [ "$(env)" = "gpu" ]; then \
-		srun --chdir $$(pwd) --gpus 20gb:1 -p gpu singularity run --nv $(SIF_PATH) /bin/bash -c "source $(VENV_PATH)/bin/activate && poetry run python $(script) $(args)"; \
+		srun --chdir $$(pwd) --gpus 20gb:1 -p gpu singularity run --nv $(SIF_PATH) /bin/bash -c "source $(VENV_PATH)/bin/activate && poetry run python $(PYTHON_SCRIPT) $(args)"; \
 	elif [ "$(env)" = "cpu" ]; then \
-		srun --chdir $$(pwd) -p cpu singularity run $(SIF_PATH) /bin/bash -c "source $(VENV_PATH)/bin/activate && poetry run python $(script) $(args)"; \
+		srun --chdir $$(pwd) -p cpu singularity run $(SIF_PATH) /bin/bash -c "source $(VENV_PATH)/bin/activate && poetry run python $(PYTHON_SCRIPT) $(args)"; \
 	else \
 		echo "指定された実行環境が不正です。gpuまたはcpuを指定してください。"; \
 	fi
@@ -62,16 +60,26 @@ lint:
 format:
 	poetry run pysen run format
 
+# unittestの実行
 .PHONY: test
 test:
 	poetry run pytest -s -vv ./tests
+
+.PHONY: test_script
+test_script:
+	@if [ "$(env)" = "gpu" ]; then \
+		srun --chdir $$(pwd) --gpus 20gb:1 -p gpu singularity run --nv $(SIF_PATH) /bin/bash -c "source $(VENV_PATH)/bin/activate && poetry run pytest -s -vv ./tests"; \
+	elif [ "$(env)" = "cpu" ]; then \
+		srun --chdir $$(pwd) -p cpu singularity run $(SIF_PATH) /bin/bash -c "source $(VENV_PATH)/bin/activate && poetry run pytest -s -vv ./tests"; \
+	else \
+		echo "指定された実行環境が不正です。gpuまたはcpuを指定してください。"; \
+	fi
 
 # 変数を指定
 env := cpu
 module := numpy # 追加するモジュール名
 start := 0
 end := $$(echo $((91 * 91))) # end 変数の計算を修正
-script := src/data/dataset.py # 実行するPythonスクリプトのパスを指定
 args := some_args # スクリプトに渡す引数を指定
 
 
@@ -79,3 +87,4 @@ args := some_args # スクリプトに渡す引数を指定
 # make add_module_poetry
 # make run_parallel
 # make run
+# make test_script

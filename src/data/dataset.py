@@ -180,7 +180,10 @@ class RankineData:
         center = np.array([self.params_true["center_x"], self.params_true["center_y"]])
         radar = self.radar
         n_obs = self.number_of_obs
-        obs_points = self.decide_obs_points()
+        if os.path.exists(f"{self.PATH}/data/obs_points.npy"):
+            obs_points = self.load_data("obs_points.npy")
+        else:
+            obs_points = self.decide_obs_points()
         dist_obs_radar = np.sqrt(
             (obs_points[:, 0] - radar[0]) ** 2 + (obs_points[:, 1] - radar[1]) ** 2
         )
