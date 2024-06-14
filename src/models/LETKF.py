@@ -1,10 +1,4 @@
-<<<<<<< HEAD
 import argparse
-
-=======
-<<<<<<< HEAD
-import numpy as np
->>>>>>> make_dataset#3
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy import linalg as LA
